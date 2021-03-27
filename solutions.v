@@ -33,7 +33,7 @@ Qed.
 Definition egocentric E := E <3 E.
 Definition egocentric_exists := exists E, egocentric E.
 
-Theorem ch9p1_egocentric :
+Theorem ch9p2_egocentric :
   composition_exists /\ mockingbird_exists
   -> egocentric_exists.
 Proof.
@@ -328,11 +328,10 @@ Proof.
 Qed.
 
 Theorem ch9p29 :
-  lark_exists -> exists E, egocentric E.
+  lark_exists -> egocentric_exists.
 Proof.
   intros HLe. inversion HLe as [L HL].
   destruct (ch9p25 HLe L) as [F HLFF].
-  Print egocentric.
 Admitted.
 
 Theorem ch10_is_there_a_sage_bird :
@@ -379,15 +378,22 @@ Theorem ch11p3_egocentric :
   bluebird_exists /\ mockingbird_exists
     -> egocentric_exists.
 Proof.
-  intros [[B HB] [M HM]].
-Admitted.
+  intros [HBe HMe].
+  apply (ch9p2_egocentric
+    (conj (ch11p1 HBe) HMe)).
+Qed.
 
 Theorem ch11p4_hopelessly_egocentric :
   bluebird_exists /\ mockingbird_exists /\ kestrel_exists
     -> hopelessly_egocentric_exists.
 Proof.
-  intros [[B HB] [[M HM] [K HK]]].
-Admitted.
+  intros [HBe [HMe [K HK]]].
+  apply ch11p1 in HBe as HCe.
+  destruct (ch9p1_the_significance_of_the_mockingbird (conj HCe HMe) K) as [F HKFF].
+  exists F. intros x.
+  assert (H: F; x = K; F; x). { rewrite HKFF. reflexivity. }
+  rewrite H. rewrite HK. reflexivity.
+Qed.
 
 Definition dove D := forall x y z w, D;x;y;z;w = x;y;(z;w).
 Definition dove_exists := exists D, dove D.
@@ -575,10 +581,12 @@ Proof.
 Qed.
 
 Definition commutes x y := x;y = y;x.
+Definition universal_commuter_exists :=
+  exists C, forall x, commutes C x.
 
 Theorem ch11p18_commuting_birds :
   thrush_exists /\ (forall A, exists F, A <3 F)
-    -> (exists A, forall x, commutes A x).
+    -> universal_commuter_exists.
 Proof.
   intros [[T HT] HFe].
   destruct (HFe T) as [F HTFF].
@@ -587,3 +595,250 @@ Proof.
   rewrite H. rewrite HT. rewrite H.
   reflexivity.
 Qed.
+
+Theorem ch11p19 :
+  bluebird_exists /\ thrush_exists /\ mockingbird_exists
+    -> universal_commuter_exists.
+Proof.
+  intros [HBe [HTe HMe]].
+  apply (ch11p18_commuting_birds (conj
+    HTe
+    (ch11p2_bluebirds_and_mockingbirds (conj HBe HMe))
+  )).
+Qed.
+
+Definition robin R := forall x y z, R;x;y;z = y;z;x.
+Definition robin_exists := exists R, robin R.
+
+Theorem ch11p20_robins :
+  bluebird_exists /\ thrush_exists -> robin_exists.
+Proof.
+  intros [[B HB] [T HT]].
+  exists (B;B;T). intros x y z.
+  repeat rewrite HB. rewrite HT.
+  reflexivity.
+Qed.
+
+Theorem ch11p21_robins_and_cardinals :
+  robin_exists -> cardinal_exists.
+Proof.
+  intros [R HR].
+  exists (R;R;R). intros x y z.
+  repeat rewrite HR. reflexivity.
+Qed.
+
+Theorem ch11p22_two_useful_laws_part1 :
+  forall C R x, cardinal C /\ robin R
+    -> C;x = R;x;R.
+Proof.
+  (* Needs functional extensionality as written?
+     Is it fair to pose it differently? *)
+Admitted.
+
+Theorem ch11p22_two_useful_laws_part2 :
+  forall C B T R x, cardinal C /\ bluebird B /\ robin R
+    -> C;x = B;(T;x);R.
+Proof.
+  (* Needs functional extensionality as written?
+     Is it fair to pose it differently? *)
+Admitted.
+
+Theorem ch11p23_a_question :
+  cardinal_exists -> robin_exists.
+Proof.
+  intros [C HC].
+  exists (C;C). intros x y z.
+  repeat rewrite HC. reflexivity.
+Qed.
+
+Definition finch F := forall x y z, F;x;y;z = z;y;x.
+Definition finch_exists := exists F, finch F.
+
+Theorem ch11p24_finches :
+  bluebird_exists /\ thrush_exists -> finch_exists.
+Proof.
+Admitted.
+
+Theorem ch11p25 :
+  thrush_exists /\ eagle_exists -> finch_exists.
+Proof.
+  intros [[T HT] [E HE]].
+Admitted.
+
+(* todo: express p26 *)
+
+Definition vireo V := forall x y z, V;x;y;z = z;x;y.
+Definition vireo_exists := exists V, vireo V.
+
+Theorem ch11p27_vireos :
+  bluebird_exists /\ thrush_exists -> vireo_exists.
+Proof.
+  intros H.
+  inversion H as [[B HB] [T HT]].
+  destruct (ch11p24_finches H) as [F HF].
+  Search cardinal_exists.
+  destruct (ch11p21_robins_and_cardinals (ch11p20_robins H)) as [C HC].
+  exists (C;F). intros x y z.
+  rewrite HC. rewrite HF. reflexivity.
+Qed.
+
+(* todo: express p28 *)
+
+Theorem ch11p29_a_question :
+  cardinal_exists /\ vireo_exists -> finch_exists.
+Proof.
+  intros [[C HC] [V HV]].
+  exists (C;V). intros x y z.
+  rewrite HC. rewrite HV. reflexivity.
+Qed.
+
+Theorem ch11p30_a_curiosity :
+  robin_exists /\ kestrel_exists -> identity_exists.
+Proof.
+Admitted.
+
+Definition cardinal_1r C :=
+  forall x y z w, C;x;y;z;w = x;y;w;z.
+Definition cardinal_1r_exists := exists C, cardinal_1r C.
+
+Theorem ch11p31_the_bird_c1r :
+  bluebird_exists /\ cardinal_exists -> cardinal_1r_exists.
+Proof.
+  intros [[B HB] [C HC]].
+  exists (B;C). intros x y z w.
+  rewrite HB. rewrite HC.
+  reflexivity.
+Qed.
+
+Definition robin_1r R :=
+  forall x y z w, R;x;y;z;w = x;z;w;y.
+Definition robin_1r_exists := exists R, robin_1r R.
+
+Theorem ch11p32_the_bird_r1r :
+  bluebird_exists /\ cardinal_exists -> robin_1r_exists.
+Proof.
+Admitted.
+
+Definition finch_1r F :=
+  forall x y z w, F;x;y;z;w = x;w;z;y.
+Definition finch_1r_exists := exists F, finch_1r F.
+
+Theorem ch11p33_the_bird_f1r :
+  bluebird_exists /\ cardinal_exists -> finch_1r_exists.
+Proof.
+Admitted.
+
+Definition vireo_1r V :=
+  forall x y z w, V;x;y;z;w = x;w;z;y.
+Definition vireo_1r_exists := exists V, vireo_1r V.
+
+Theorem ch11p34_the_bird_v1r :
+  bluebird_exists /\ cardinal_exists -> vireo_1r_exists.
+Proof.
+Admitted.
+
+Definition cardinal_2r C :=
+  forall x y z1 z2 z3, C;x;y;z1;z2;z3 = x;y;z1;z3;z2.
+Definition cardinal_2r_exists := exists C, cardinal_2r C.
+
+Definition robin_2r R :=
+  forall x y z1 z2 z3, R;x;y;z1;z2;z3 = x;y;z2;z3;z1.
+Definition robin_2r_exists := exists R, robin_2r R.
+
+Definition finch_2r F :=
+  forall x y z1 z2 z3, F;x;y;z1;z2;z3 = x;y;z3;z2;z1.
+Definition finch_2r_exists := exists F, finch_2r F.
+
+Definition vireo_2r V :=
+  forall x y z1 z2 z3, V;x;y;z1;z2;z3 = x;y;z3;z1;z2.
+Definition vireo_2r_exists := exists V, vireo_2r V.
+
+Theorem ch11p35_twice_removed :
+  bluebird_exists /\ cardinal_exists
+    -> cardinal_2r_exists
+    /\ robin_2r_exists
+    /\ finch_2r_exists
+    /\ vireo_2r_exists.
+Proof.
+Admitted.
+
+Theorem ch11p36_vireos_revisted :
+  cardinal_1r_exists /\ thrush_exists -> vireo_exists.
+Proof.
+Admitted.
+
+Definition queer Q := forall x y z, Q;x;y;z = y;(x;z).
+Definition queer_exists := exists Q, queer Q.
+
+Theorem ch11p37_queer_birds :
+  bluebird_exists /\ thrush_exists -> queer_exists.
+Proof.
+Admitted.
+
+Definition quixotic Q1 := forall x y z, Q1;x;y;z = x;(z;y).
+Definition quixotic_exists := exists Q1, quixotic Q1.
+
+Theorem ch11p38_quixotic_birds :
+  bluebird_exists /\ thrush_exists -> quixotic_exists.
+Proof.
+Admitted.
+
+Definition quizzical Q2 := forall x y z, Q2;x;y;z = y;(z;x).
+Definition quizzical_exists := exists Q2, quizzical Q2.
+
+Theorem ch11p39_quizzical_birds :
+  bluebird_exists /\ thrush_exists -> quizzical_exists.
+Proof.
+Admitted.
+
+Theorem ch11p40_a_problem :
+  cardinal_exists -> quixotic_exists <-> quizzical_exists.
+Proof.
+  intros HCe.
+Admitted.
+
+Definition quirky Q3 := forall x y z, Q3;x;y;z = z;(x;y).
+Definition quirky_exists := exists Q3, quirky Q3.
+
+Theorem ch11p41_quirky_birds :
+  bluebird_exists /\ thrush_exists -> quirky_exists.
+Proof.
+Admitted.
+
+Definition quacky Q4 := forall x y z, Q4;x;y;z = z;(y;x).
+Definition quacky_exists := exists Q4, quacky Q4.
+
+Theorem ch11p42_quacky_birds :
+  bluebird_exists /\ thrush_exists -> quacky_exists.
+Proof.
+Admitted.
+
+Theorem ch11p43_an_old_proverb :
+  cardinal_exists -> quirky_exists <-> quacky_exists.
+Proof.
+Admitted.
+
+Theorem ch11p44_a_question :
+  quixotic_exists /\ thrush_exists -> quacky_exists.
+Proof.
+Admitted.
+
+Theorem ch11p45_an_interesting_fact_about_the_queer_bird_Q :
+  queer_exists /\ thrush_exists -> bluebird_exists.
+Proof.
+Admitted.
+
+Theorem ch11p46 :
+  queer_exists /\ thrush_exists -> cardinal_exists.
+Proof.
+Admitted.
+
+Definition goldfinch G
+  := forall x y z w, G;x;y;z;w = x;w;(y;z).
+Definition goldfinch_exists := exists G, goldfinch G.
+
+Theorem ch11p47_goldfinches :
+  bluebird_exists /\ thrush_exists -> goldfinch_exists.
+Proof.
+Admitted.
+
