@@ -657,13 +657,24 @@ Definition finch_exists := exists F, finch F.
 Theorem ch11p24_finches :
   bluebird_exists /\ thrush_exists -> finch_exists.
 Proof.
-Admitted.
+  intros H.
+  inversion H as [[B HB] [T HT]].
+  destruct (ch11p20_robins H) as [R HR].
+  destruct ch11p21_robins_and_cardinals as [C HC].
+    exists R. apply HR.
+  exists (B;C;R). intros x y z.
+  rewrite HB. rewrite HC. rewrite HR.
+  reflexivity.
+Qed.
 
 Theorem ch11p25 :
   thrush_exists /\ eagle_exists -> finch_exists.
 Proof.
   intros [[T HT] [E HE]].
-Admitted.
+  exists (E;T;T;E;T). intros x y z.
+  repeat (rewrite HT || rewrite HE).
+  reflexivity.
+Qed.
 
 (* todo: express p26 *)
 
@@ -695,7 +706,11 @@ Qed.
 Theorem ch11p30_a_curiosity :
   robin_exists /\ kestrel_exists -> identity_exists.
 Proof.
-Admitted.
+  intros [[R HR] [K HK]].
+  exists (R; K; K). intros x.
+  rewrite HR. repeat rewrite HK.
+  reflexivity.
+Qed.
 
 Definition cardinal_1r C :=
   forall x y z w, C;x;y;z;w = x;y;w;z.
@@ -717,6 +732,7 @@ Definition robin_1r_exists := exists R, robin_1r R.
 Theorem ch11p32_the_bird_r1r :
   bluebird_exists /\ cardinal_exists -> robin_1r_exists.
 Proof.
+  intros [[B HB] [C HC]].
 Admitted.
 
 Definition finch_1r F :=
@@ -729,13 +745,19 @@ Proof.
 Admitted.
 
 Definition vireo_1r V :=
-  forall x y z w, V;x;y;z;w = x;w;z;y.
+  forall x y z w, V;x;y;z;w = x;w;y;z.
 Definition vireo_1r_exists := exists V, vireo_1r V.
 
 Theorem ch11p34_the_bird_v1r :
   bluebird_exists /\ cardinal_exists -> vireo_1r_exists.
 Proof.
-Admitted.
+  intros H.
+  destruct (ch11p32_the_bird_r1r H) as [R1r HR1r].
+  destruct H as [[B HB] _].
+  exists (B;R1r;R1r). intros x y z w.
+  rewrite HB. repeat rewrite HR1r.
+  reflexivity.
+Qed.
 
 Definition cardinal_2r C :=
   forall x y z1 z2 z3, C;x;y;z1;z2;z3 = x;y;z1;z3;z2.
