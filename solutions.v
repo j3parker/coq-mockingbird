@@ -627,6 +627,15 @@ Proof.
   repeat rewrite HR. reflexivity.
 Qed.
 
+Lemma cardinal_from_bluebird_and_thrush :
+  bluebird_exists /\ thrush_exists -> cardinal_exists.
+Proof.
+  intros H.
+  apply ch11p21_robins_and_cardinals.
+  apply ch11p20_robins.
+  assumption.
+Qed.
+
 Theorem ch11p22_two_useful_laws_part1 :
   forall C R x, cardinal C /\ robin R
     -> C;x = R;x;R.
@@ -815,7 +824,10 @@ Qed.
 Theorem ch11p36_vireos_revisted :
   cardinal_1r_exists /\ thrush_exists -> vireo_exists.
 Proof.
-Admitted.
+  intros [[C1r HC1r] [T HT]].
+  exists (C1r;T). intros x y z.
+  rewrite HC1r. rewrite HT. reflexivity.
+Qed.
 
 Definition queer Q := forall x y z, Q;x;y;z = y;(x;z).
 Definition queer_exists := exists Q, queer Q.
@@ -823,7 +835,12 @@ Definition queer_exists := exists Q, queer Q.
 Theorem ch11p37_queer_birds :
   bluebird_exists /\ thrush_exists -> queer_exists.
 Proof.
-Admitted.
+  intros H.
+  destruct (cardinal_from_bluebird_and_thrush H) as [C HC].
+  destruct H as [[B HB] _].
+  exists (C;B). intros x y z.
+  rewrite HC. rewrite HB. reflexivity.
+Qed.
 
 Definition quixotic Q1 := forall x y z, Q1;x;y;z = x;(z;y).
 Definition quixotic_exists := exists Q1, quixotic Q1.
@@ -831,7 +848,14 @@ Definition quixotic_exists := exists Q1, quixotic Q1.
 Theorem ch11p38_quixotic_birds :
   bluebird_exists /\ thrush_exists -> quixotic_exists.
 Proof.
-Admitted.
+  intros H.
+  destruct (cardinal_from_bluebird_and_thrush H) as [C HC].
+  inversion H as [HBe [T HT]].
+  destruct (ch11p6_blackbirds HBe) as [B1 HB1].
+  exists (C;B1;T). intros x y z.
+  rewrite HC. rewrite HB1. rewrite HT.
+  reflexivity.
+Qed.
 
 Definition quizzical Q2 := forall x y z, Q2;x;y;z = y;(z;x).
 Definition quizzical_exists := exists Q2, quizzical Q2.
@@ -839,13 +863,29 @@ Definition quizzical_exists := exists Q2, quizzical Q2.
 Theorem ch11p39_quizzical_birds :
   bluebird_exists /\ thrush_exists -> quizzical_exists.
 Proof.
-Admitted.
+  intros H.
+  destruct (cardinal_from_bluebird_and_thrush H) as [C HC].
+  inversion H as [HBe [T HT]].
+  inversion HBe as [B HB].
+  destruct (ch11p32_the_bird_r1r (conj HBe (ex_intro cardinal C HC))) as [R1r HR1r].
+  exists (R1r;B). intros x y z.
+  rewrite HR1r. rewrite HB.
+  reflexivity.
+Qed.
 
 Theorem ch11p40_a_problem :
   cardinal_exists -> quixotic_exists <-> quizzical_exists.
 Proof.
-  intros HCe.
-Admitted.
+  intros [C HC]. split.
+  - intros [Q1 HQ1].
+    exists (C;Q1). intros x y z.
+    rewrite HC. rewrite HQ1.
+    reflexivity.
+  - intros [Q2 HQ2].
+    exists (C;Q2). intros x y z.
+    rewrite HC. rewrite HQ2.
+    reflexivity.
+Qed.
 
 Definition quirky Q3 := forall x y z, Q3;x;y;z = z;(x;y).
 Definition quirky_exists := exists Q3, quirky Q3.
@@ -853,7 +893,11 @@ Definition quirky_exists := exists Q3, quirky Q3.
 Theorem ch11p41_quirky_birds :
   bluebird_exists /\ thrush_exists -> quirky_exists.
 Proof.
-Admitted.
+  intros [[B HB] [T HT]].
+  exists (B;T). intros x y z.
+  rewrite HB. rewrite HT.
+  reflexivity.
+Qed.
 
 Definition quacky Q4 := forall x y z, Q4;x;y;z = z;(y;x).
 Definition quacky_exists := exists Q4, quacky Q4.
@@ -861,12 +905,27 @@ Definition quacky_exists := exists Q4, quacky Q4.
 Theorem ch11p42_quacky_birds :
   bluebird_exists /\ thrush_exists -> quacky_exists.
 Proof.
-Admitted.
+  intros [HBe [T HT]].
+  destruct (ch11p6_blackbirds HBe) as [B1 HB1].
+  destruct HBe as [B HB].
+  exists (B1;T;T). intros x y z.
+  rewrite HB1. repeat rewrite HT.
+  reflexivity.
+Qed.
 
 Theorem ch11p43_an_old_proverb :
   cardinal_exists -> quirky_exists <-> quacky_exists.
 Proof.
-Admitted.
+  intros [C HC]. split.
+  - intros [Q3 HQ3].
+    exists (C;Q3). intros x y z.
+    rewrite HC. rewrite HQ3.
+    reflexivity.
+  - intros [Q4 HQ4].
+    exists (C;Q4). intros x y z.
+    rewrite HC. rewrite HQ4.
+    reflexivity.
+Qed.
 
 Theorem ch11p44_a_question :
   quixotic_exists /\ thrush_exists -> quacky_exists.
