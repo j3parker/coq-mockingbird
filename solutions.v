@@ -732,8 +732,12 @@ Definition robin_1r_exists := exists R, robin_1r R.
 Theorem ch11p32_the_bird_r1r :
   bluebird_exists /\ cardinal_exists -> robin_1r_exists.
 Proof.
-  intros [[B HB] [C HC]].
-Admitted.
+  intros H.
+  destruct (ch11p31_the_bird_c1r H) as [C1r HC1r].
+  destruct H as [[B HB] [C HC]].
+  exists (C1r;C1r). intros x y z w.
+  repeat rewrite HC1r. reflexivity.
+Qed.
 
 Definition finch_1r F :=
   forall x y z w, F;x;y;z;w = x;w;z;y.
@@ -742,7 +746,14 @@ Definition finch_1r_exists := exists F, finch_1r F.
 Theorem ch11p33_the_bird_f1r :
   bluebird_exists /\ cardinal_exists -> finch_1r_exists.
 Proof.
-Admitted.
+  intros H.
+  destruct (ch11p31_the_bird_c1r H) as [C1r HC1r].
+  destruct H as [[B HB] [C HC]].
+  (* used vireo-once-removed here *)
+  exists (C1r;(B;C1r;C)). intros x y z w.
+  repeat (rewrite HC1r || rewrite HB || rewrite HC).
+  reflexivity.
+Qed.
 
 Definition vireo_1r V :=
   forall x y z w, V;x;y;z;w = x;w;y;z.
@@ -752,10 +763,10 @@ Theorem ch11p34_the_bird_v1r :
   bluebird_exists /\ cardinal_exists -> vireo_1r_exists.
 Proof.
   intros H.
-  destruct (ch11p32_the_bird_r1r H) as [R1r HR1r].
-  destruct H as [[B HB] _].
-  exists (B;R1r;R1r). intros x y z w.
-  rewrite HB. repeat rewrite HR1r.
+  destruct (ch11p31_the_bird_c1r H) as [C1r HC1r].
+  destruct H as [[B HB] [C HC]].
+  exists (B;C1r;C). intros x y z w.
+  rewrite HB. rewrite HC1r. rewrite HC.
   reflexivity.
 Qed.
 
@@ -782,7 +793,24 @@ Theorem ch11p35_twice_removed :
     /\ finch_2r_exists
     /\ vireo_2r_exists.
 Proof.
-Admitted.
+  intros H.
+  inversion H as [HBe HCe].
+  inversion HBe as [B HB].
+  inversion HCe as [C HC].
+  repeat split.
+  - destruct (ch11p31_the_bird_c1r H) as [C1r HC1r].
+    exists (B;C1r). intros x y z1 z2 z3.
+    rewrite HB. rewrite HC1r. reflexivity.
+  - destruct (ch11p32_the_bird_r1r H) as [R1r HR1r].
+    exists (B;R1r). intros x y z1 z2 z3.
+    rewrite HB. rewrite HR1r. reflexivity.
+  - destruct (ch11p33_the_bird_f1r H) as [F1r HF1r].
+    exists (B;F1r). intros x y z1 z2 z3.
+    rewrite HB. rewrite HF1r. reflexivity.
+  - destruct (ch11p34_the_bird_v1r H) as [V1r HV1r].
+    exists (B;V1r). intros x y z1 z2 z3.
+    rewrite HB. rewrite HV1r. reflexivity.
+Qed.
 
 Theorem ch11p36_vireos_revisted :
   cardinal_1r_exists /\ thrush_exists -> vireo_exists.
