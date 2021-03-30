@@ -21,17 +21,29 @@ Definition btm_exists :=
 Theorem ch12p2_larks :
   btm_exists -> lark_exists.
 Proof.
-Admitted.
+  intros [[B HB] [[T HT] [M HM]]].
+  exists (B;(T;M);B). intros x y.
+  repeat (rewrite HB || rewrite HT || rewrite HM).
+  reflexivity.
+Qed.
 
 Theorem ch12p3 :
   bluebird_exists /\ warbler_exists -> lark_exists.
 Proof.
-Admitted.
+  intros [[B HB] [W HW]].
+  exists (B;W;B). intros x y.
+  rewrite HB. rewrite HW. rewrite HB.
+  reflexivity.
+Qed.
 
 Theorem ch12p4 :
   mockingbird_exists /\ queer_exists -> lark_exists.
 Proof.
-Admitted.
+  intros [[M HM] [Q HQ]].
+  exists (Q;M). intros x y.
+  rewrite HQ. rewrite HM.
+  reflexivity.
+Qed.
 
 Definition converse_warbler Wp :=
   forall x y, Wp;x;y = y;x;x.
@@ -41,7 +53,14 @@ Definition converse_warbler_exists :=
 Theorem ch12p5_the_bird_wp :
   btm_exists -> converse_warbler_exists.
 Proof.
-Admitted.
+  intros [HBe [HTe [M HM]]].
+  destruct (ch11p20_robins (conj HBe HTe)) as [R HR].
+  destruct HBe as [B HB].
+  destruct HTe as [T HT].
+  exists (B;M;R). intros x y.
+  rewrite HB. rewrite HM. repeat rewrite HR.
+  reflexivity.
+Qed.
 
 Theorem ch12p6_the_warbler :
   bluebird_exists
@@ -49,6 +68,7 @@ Theorem ch12p6_the_warbler :
   /\ cardinal_exists
   /\ mockingbird_exists -> warbler_exists.
 Proof.
+  intros [[B HB] [[R HR] [[C HC] [M HM]]]].
 Admitted.
 
 Theorem ch12p7 :
