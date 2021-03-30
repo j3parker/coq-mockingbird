@@ -930,17 +930,29 @@ Qed.
 Theorem ch11p44_a_question :
   quixotic_exists /\ thrush_exists -> quacky_exists.
 Proof.
-Admitted.
+  intros [[Q1 HQ1] [T HT]].
+  exists (Q1;T). intros x y z.
+  rewrite HQ1. rewrite HT.
+  reflexivity.
+Qed.
 
 Theorem ch11p45_an_interesting_fact_about_the_queer_bird_Q :
   queer_exists /\ thrush_exists -> bluebird_exists.
 Proof.
-Admitted.
+  intros [[Q HQ] [T HT]].
+  exists (Q;T;(Q;Q)). intros x y z.
+  repeat (rewrite HQ || rewrite HT).
+  reflexivity.
+Qed.
 
 Theorem ch11p46 :
   queer_exists /\ thrush_exists -> cardinal_exists.
 Proof.
-Admitted.
+  intros [[Q HQ] [T HT]].
+  exists (Q;Q;(Q;T)). intros x y z.
+  repeat (rewrite HQ || rewrite HT).
+  reflexivity.
+Qed.
 
 Definition goldfinch G
   := forall x y z w, G;x;y;z;w = x;w;(y;z).
@@ -949,5 +961,10 @@ Definition goldfinch_exists := exists G, goldfinch G.
 Theorem ch11p47_goldfinches :
   bluebird_exists /\ thrush_exists -> goldfinch_exists.
 Proof.
-Admitted.
-
+  intros H.
+  destruct (cardinal_from_bluebird_and_thrush H) as [C HC].
+  destruct H as [[B HB] _].
+  exists (B;B;C). intros x y z w.
+  repeat rewrite HB. rewrite HC.
+  reflexivity.
+Qed.
