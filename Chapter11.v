@@ -1,4 +1,4 @@
-From Mockingbird Require Import Chapter9.
+From Mockingbird Require Export Chapter9.
 
 Definition bluebird B := forall x y z, B;x;y;z = x;(y;z).
 Definition bluebird_exists := exists B, bluebird B.
