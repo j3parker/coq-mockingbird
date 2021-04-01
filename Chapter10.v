@@ -11,11 +11,8 @@ Proof.
   intros M [HM [HCe [A HA]]].
   destruct (HCe M A) as [S HS]. exists S. intros x.
   unfold is_fond_of.
-  assert (H: S;x = x;(S;x)). {
-    rewrite HS.
-    rewrite <- HA.
-    rewrite <- HM.
-    reflexivity.
-  }
-  rewrite <- H. reflexivity.
+  rewrite HS.
+  rewrite <- HA.
+  rewrite <- HM.
+  reflexivity.
 Qed.
