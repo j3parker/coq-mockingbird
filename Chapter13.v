@@ -116,7 +116,7 @@ Proof.
   intros H.
   destruct (ch12p7 H) as [W HW].
   destruct H as [[B HB] [[T HT] [M HM]]].
-  exists (B;W;(B;(B;T); M)). intros x y.
+  exists (B;W;(B;(B;T);M)). intros x y.
   repeat (rewrite HB || rewrite HW).
   rewrite HT. rewrite HM. reflexivity.
 Qed.
