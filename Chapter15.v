@@ -10,8 +10,7 @@ Definition complementary_singer_exists :=
     x';y,d! <-> ~x;y,d!.
 
 Theorem ch15p1 :
-  exists a, special a /\ complementary_singer_exists
-    -> False.
+  ~(exists a, special a /\ complementary_singer_exists).
 Proof.
 Admitted.
 
@@ -19,7 +18,7 @@ Definition special' N := forall x d,
   N;x,d! <-> ~x,d!.
 
 Theorem ch15p2 :
-  exists N, special' N /\ sage_exists -> False.
+  ~(exists N, special' N /\ sage_exists).
 Proof.
 Admitted.
 
