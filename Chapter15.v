@@ -16,15 +16,15 @@ Definition complementary_singer_exists :=
 
 (* Although not mentioned in the books, some of the exercises
    implicitly assume there is at least one day. *)
-Axiom someday : day.
+Axiom today : day.
 
 Theorem ch15p1 :
   ~(exists a, special a /\ complementary_singer_exists).
 Proof.
   intros [a [HS HCe]].
   destruct (HCe a) as [a' Ha'].
-  specialize (Ha' a' someday).
-  specialize (HS a' someday).
+  specialize (Ha' a' today).
+  specialize (HS a' today).
   intuition.
 Qed.
 
@@ -35,7 +35,7 @@ Theorem ch15p2 :
   ~(exists N, special' N /\ sage_exists).
 Proof.
   intros [N [HSp [S HSage]]].
-  specialize (HSp (S;N) someday).
+  specialize (HSp (S;N) today).
   rewrite HSage in HSp.
   intuition.
 Qed.
