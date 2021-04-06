@@ -3,11 +3,6 @@ From Mockingbird Require Export Chapter14.
 Require Import Coq.Logic.Decidable.
 Require Import Coq.Logic.ClassicalFacts.
 
-Definition sing_on_same_days x y :=
-  forall d, x,d! <-> y,d!.
-
-Notation "x ~= y" := (sing_on_same_days x y) (at level 70).
-
 Definition special a := forall x d, a;x,d! <-> x;x,d!.
 
 Definition complementary_singer_exists :=
