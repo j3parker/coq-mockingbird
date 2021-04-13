@@ -48,7 +48,10 @@ Proof.
     intuition.
 Qed.
 
-(* TODO: pose ch17p2 in a way that doesn't spoil ch17p1 *)
+Theorem ch17p2_a_follow_up :
+  Prop. (* TODO: pose in a way that doesn't spoil ch17p1 *)
+Proof.
+Admitted.
 
 Definition society (S : bird -> Prop) := exists R,
   forall x, S x <-> R;x!.
@@ -67,7 +70,7 @@ Proof.
   destruct (classic (R';R'!)); intuition.
 Qed.
 
-Theorem ch17p3 : law_2 /\ law_3 -> ~society sings.
+Theorem ch17p3_the_bird_societies : law_2 /\ law_3 -> ~society sings.
 Proof.
   intros [H2 H3] [R HR].
   specialize (H2 R) as [R' HR'].
