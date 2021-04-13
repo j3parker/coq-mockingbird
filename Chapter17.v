@@ -54,10 +54,32 @@ Definition society (S : bird -> Prop) := exists R,
   forall x, S x <-> R;x!.
 
 Lemma ch17p3' S : law_3 /\ society S ->
-  (exists A, S A /\ A!) \/ (exists A, ~(S A) /\ ~A!).
+  exists A, (S A /\ A!) \/ (~(S A) /\ ~A!).
 Proof.
-Admitted.
+  intros [H3 [R HS]].
+  specialize (H3 R). destruct H3 as [R' HR'].
+  specialize (HR' R').
+  specialize (HS (R';R')).
+  exists (R';R').
+  (* R*x = R(xx). In other words, R*x sings if-and-only-if xx sings, which
+     means R*x sings if-and-only-if xx is in the society. Take x = R* to get
+     that R*R* sings if-and-only-if R*R* is in the society. *)
+  destruct (classic (R';R'!)); intuition.
+Qed.
 
-Theorem ch17p3 : law_2 /\ law_3 -> society sings.
+Theorem ch17p3 : law_2 /\ law_3 -> ~society sings.
 Proof.
-Admitted.
+  intros [H2 H3] [R HR].
+  specialize (H2 R) as [R' HR'].
+  (* If the singers form a society, the non-singers will also form a society. *)
+  pose (not_sings := fun b => ~b!).
+  assert (HnS: society not_sings). {
+    (* R' can act as the representative for this society *)
+    exists R'. intros x. specialize (HR' x).
+    rewrite HR'. apply not_iff_compat. apply HR.
+  }
+  (* But if that's the case, by the lemma there exists a singer inside the
+     society (a contradiction) or a non-singer outside (a contradiction). *)
+  destruct (ch17p3' not_sings (conj H3 HnS)).
+  intuition.
+Qed.
