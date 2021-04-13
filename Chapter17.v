@@ -47,3 +47,17 @@ Proof.
        directly get a contradiction. *)
     intuition.
 Qed.
+
+(* TODO: pose ch17p2 in a way that doesn't spoil ch17p1 *)
+
+Definition society (S : bird -> Prop) := exists R,
+  forall x, S x <-> R;x!.
+
+Lemma ch17p3' S : law_3 /\ society S ->
+  (exists A, S A /\ A!) \/ (exists A, ~(S A) /\ ~A!).
+Proof.
+Admitted.
+
+Theorem ch17p3 : law_2 /\ law_3 -> society sings.
+Proof.
+Admitted.
